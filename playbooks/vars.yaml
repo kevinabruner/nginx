@@ -4,3 +4,8 @@ APPLICATION: nginx
 netbox_dns: netbox.thejfk.ca
 INTERFACE: eth0   
 nginx_backend_port: 80
+ha_hostnames:
+  - db-prod
+  - db-dev
+  - internal-proxy-vip
+  - external-proxy-vip
