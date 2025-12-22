@@ -2,8 +2,7 @@
   hosts: prod
   serial: 1
   vars_files:
-    - vars.yaml
-    - vault.yaml
+    - vars.yaml    
   tasks:                
     - name: Generate and copy config files
       import_tasks: tasks/generate-configs.yaml

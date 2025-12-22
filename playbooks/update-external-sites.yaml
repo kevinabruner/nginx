@@ -3,7 +3,6 @@
   serial: 1
   vars_files:
     - vars.yaml
-    - vault.yaml
   tasks:                
     - name: Generate nginx config files on server
       import_tasks: tasks/generate-sites.yaml

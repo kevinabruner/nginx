@@ -2,8 +2,7 @@
   hosts: prod
   serial: 1
   vars_files:
-    - vars.yaml
-    - vault.yaml
+    - vars.yaml    
   tasks:
     - name: Run install tasks
       import_tasks: tasks/install.yaml
