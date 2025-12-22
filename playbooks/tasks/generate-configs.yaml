@@ -1,0 +1,25 @@
+- name: Configure and Start Load Balancing Services
+  block:              
+    - name: Copy the nginx config file
+      template:
+        src: "{{ git_dir }}/templates/nginx.conf.j2"
+        dest: "/etc/nginx/nginx.conf"
+      become: true  
+
+    - name: Start nginx
+      systemd:
+        name: "nginx"            
+        state: restarted
+        enabled: yes      
+      become: true
+
+  rescue:
+    - name: Stop services due to configuration failure
+      systemd:
+        name: "nginx"
+        state: stopped         
+      become: true
+      
+    - name: Fail the playbook
+      fail:
+        msg: "Configuration failed. Services have been stopped to prevent inconsistent states."

@@ -1,0 +1,6 @@
+ANSIBLE_USER: kevin
+git_dir: /home/{{ ANSIBLE_USER }}/{{ APPLICATION }}
+APPLICATION: nginx
+netbox_dns: netbox.thejfk.ca
+INTERFACE: eth0   
+nginx_backend_port: 80

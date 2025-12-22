@@ -1,0 +1,49 @@
+server {
+	listen {{ nginx_backend_port }};
+	server_name ryan-dev.thejfk.ca ssvp-dev.thejfk.ca;
+	location / {
+			proxy_set_header X-Forwarded-Proto https;
+			proxy_pass http://ssvp-dev1.jfkhome;
+			proxy_http_version 1.1;
+			proxy_set_header Connection $http_connection;
+			proxy_set_header Origin http://$host;
+			proxy_set_header Upgrade $http_upgrade;
+			proxy_busy_buffers_size     512k;
+			proxy_buffers  4 512k;
+			proxy_buffer_size 256k;
+	}
+	include snippets/health-check.conf;
+}
+server {
+	listen {{ nginx_backend_port }};
+	server_name ryan-prod.thejfk.ca ssvp-prod.thejfk.ca ssvp.thejfk.ca;
+	location / {
+			proxy_set_header X-Forwarded-Proto https;
+			proxy_pass http://ssvp-prod2.jfkhome;
+			proxy_http_version 1.1;
+			proxy_set_header Connection $http_connection;
+			proxy_set_header Origin http://$host;
+			proxy_set_header Upgrade $http_upgrade;
+			proxy_busy_buffers_size     512k;
+			proxy_buffers  4 512k;
+			proxy_buffer_size 256k;
+	}
+	include snippets/health-check.conf;
+}
+
+server {
+	listen {{ nginx_backend_port }};
+	server_name ryan-backup.thejfk.ca ssvp-backup.thejfk.ca;
+	location / {
+			proxy_set_header X-Forwarded-Proto https;
+			proxy_pass http://ssvp-prod1.jfkhome;
+			proxy_http_version 1.1;
+			proxy_set_header Connection $http_connection;
+			proxy_set_header Origin http://$host;
+			proxy_set_header Upgrade $http_upgrade;
+			proxy_busy_buffers_size     512k;
+			proxy_buffers  4 512k;
+			proxy_buffer_size 256k;
+	}
+	include snippets/health-check.conf;
+}

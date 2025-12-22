@@ -1,0 +1,12 @@
+server {
+	listen {{ nginx_backend_port }};
+	server_name nerdperk.ca www.nerdperk.ca;
+	location / {
+		proxy_set_header Host $http_host;
+		proxy_pass http://nerdperk-prod_backend;	
+	}
+	include snippets/health-check.conf;
+}
+upstream nerdperk-prod_backend {    
+    server nerdperk-prod.jfkhome;  
+}

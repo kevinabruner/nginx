@@ -1,0 +1,9 @@
+server {
+	listen {{ nginx_backend_port }};
+	server_name ubiquiti.thejfk.ca unifi.thejfk.ca wifi.thejfk.ca;
+	location / {
+		proxy_set_header Host $http_host;
+		proxy_pass https://wifi.jfkhome:8443;
+	}
+	include snippets/health-check.conf;
+}

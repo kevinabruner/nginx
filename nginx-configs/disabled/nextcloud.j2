@@ -1,0 +1,22 @@
+server {
+	listen {{ nginx_backend_port }};
+	server_name nextcloud.thejfk.ca;
+	location / {
+		proxy_headers_hash_max_size 512;
+		proxy_headers_hash_bucket_size 64;
+		proxy_set_header Host $host;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		add_header Front-End-Https on;
+		proxy_pass http://nextcloud.jfkhome;
+	}
+	location /.well-known/carddav {
+	    return 301 $scheme://$host/remote.php/dav;
+	}
+	location /.well-known/caldav {
+	    return 301 $scheme://$host/remote.php/dav;
+	}
+	include snippets/health-check.conf;		
+
+}

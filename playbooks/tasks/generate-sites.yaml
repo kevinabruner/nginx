@@ -1,0 +1,67 @@
+- name: Remove nginx config directories
+  become: true
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/nginx/sites-enabled
+    - /etc/nginx/sites-available
+
+- name: Recreate nginx config directories
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  loop:
+    - /etc/nginx/sites-enabled
+    - /etc/nginx/sites-available
+
+- name: Copy snippets
+  copy:
+    src: "{{ git_dir }}/nginx-configs/snippets/"
+    dest: "/etc/nginx/snippets/"
+  become: true 
+
+- name: Copy all internal nginx config files (internal only)
+  template:
+    src: "{{ item }}"
+    dest: "/etc/nginx/sites-available/{{ item | basename | regex_replace('\\.j2$', '') }}"
+    mode: preserve
+    owner: root
+    group: root
+  with_fileglob:
+    - "{{ git_dir }}/nginx-configs/internal/*.j2"
+  become: true
+  when: "'dev' in group_names"
+
+- name: Copy all external nginx config files (both internal and external)
+  template:
+    src: "{{ item }}"
+    dest: "/etc/nginx/sites-available/{{ item | basename | regex_replace('\\.j2$', '') }}"
+    mode: preserve
+    owner: root
+    group: root
+  with_fileglob:
+    - "{{ git_dir }}/nginx-configs/external/*.j2"
+  become: true
+
+- name: Find all nginx site configs
+  become: true
+  find:
+    paths: /etc/nginx/sites-available
+    file_type: file
+  register: nginx_configs
+
+- name: Enable all nginx site configs
+  become: true
+  file:
+    src: "{{ item.path }}"
+    dest: "/etc/nginx/sites-enabled/{{ item.path | basename }}"
+    state: link
+  loop: "{{ nginx_configs.files }}"
+  notify: 
+    - restart nginx    
+

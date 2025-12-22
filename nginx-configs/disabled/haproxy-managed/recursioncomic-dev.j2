@@ -1,0 +1,12 @@
+server {
+    listen {{ nginx_backend_port }};               
+    server_name recursioncomic-dev.thejfk.ca recursion-dev.thejfk.ca;
+    location / {
+        proxy_set_header Host $http_host;
+        proxy_pass http://recursion-dev_backend;
+    }
+    include snippets/health-check.conf;
+}
+upstream recursion-dev_backend {    
+    server recursioncomic-dev.jfkhome;
+}

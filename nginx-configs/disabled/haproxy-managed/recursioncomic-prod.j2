@@ -1,0 +1,12 @@
+server {
+    listen {{ nginx_backend_port }};                
+    server_name recursioncomic.com www.recursioncomic.com;
+    location / {
+        proxy_set_header Host $http_host;
+        proxy_pass http://recursion-prod_backend;
+    }    
+    include snippets/health-check.conf;
+}
+upstream recursion-prod_backend {    
+    server recursioncomic-prod.jfkhome;
+}

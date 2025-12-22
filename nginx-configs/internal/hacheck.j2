@@ -1,0 +1,56 @@
+{% for ha_host in ha_hostnames %}
+
+server {
+	listen {{ nginx_backend_port }};
+	server_name {{ ha_host }}.thejfk.ca;
+	location / {
+		proxy_set_header Host $http_host;
+		proxy_pass http://{{ ha_host }}.jfkhome:8080;
+	}
+	include snippets/health-check.conf;
+}
+
+{% endfor %}
+
+server {
+	listen {{ nginx_backend_port }};
+	server_name 
+		internal-proxy.thejfk.ca
+		internal-stats.thejfk.ca
+		internal-check.thejfk.ca
+		internal-ha.thejfk.ca
+		dev-proxy.thejfk.ca
+		dev-stats.thejfk.ca
+		dev-check.thejfk.ca
+		dev-ha.thejfk.ca
+		;
+	location / {
+		proxy_set_header Host $http_host;
+		proxy_pass http://internal-proxy-vip.jfkhome:8080;
+	}
+	include snippets/health-check.conf;
+}
+
+server {
+	listen {{ nginx_backend_port }};
+	server_name
+		external-proxy.thejfk.ca
+		external-stats.thejfk.ca
+		external-check.thejfk.ca
+		external-ha.thejfk.ca
+		prod-proxy.thejfk.ca
+		prod-stats.thejfk.ca
+		prod-check.thejfk.ca
+		prod-ha.thejfk.ca
+		proxy.thejfk.ca
+		stats.thejfk.ca
+		check.thejfk.ca
+		ha.thejfk.ca
+		;
+	location / {
+		proxy_set_header Host $http_host;
+		proxy_pass http://external-proxy-vip.jfkhome:8080;
+	}
+	include snippets/health-check.conf;
+}
+

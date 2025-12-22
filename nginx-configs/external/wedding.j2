@@ -1,0 +1,10 @@
+server {
+	listen {{ nginx_backend_port }};
+	server_name wedding.thejfk.ca;
+
+	location / {
+		proxy_set_header Host $http_host;
+		proxy_pass http://wedding-prod1.jfkhome;
+	}
+	include snippets/health-check.conf;
+}

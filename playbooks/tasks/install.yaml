@@ -1,0 +1,46 @@
+- name: Install apt packages
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+  loop:
+    - nginx    
+    - ncdu
+    - gh
+    - vim
+    - htop    
+  become: true
+
+- name: Enable services and Stop services if running
+  systemd:
+    name: "nginx"            
+    state: stopped
+    enabled: yes  
+  become: true
+
+- name: Generate nginx config files on server
+  import_tasks: tasks/generate-sites.yaml
+
+- name: Copy nginx heartbeat check
+  copy:
+    src: "{{ git_dir }}/scripts/check_nginx.sh"
+    dest: "/bin/"
+  become: true      
+
+- name: Add client_max_body_size to nginx.conf
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    insertafter: '^http'
+    line: '    client_max_body_size 1000m;'
+  become: true
+
+- name: Install header name
+  become: true
+  template:
+    src: "{{ git_dir }}/templates/x-proxy-name.conf.j2"
+    dest: /etc/nginx/conf.d/x-proxy-name.conf
+    owner: root
+    group: root
+    mode: '0644'
+ 
+- name: Generate and copy config files
+  import_tasks: tasks/generate-configs.yaml

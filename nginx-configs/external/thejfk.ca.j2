@@ -1,0 +1,9 @@
+server {
+    listen {{ nginx_backend_port }} default_server;
+	server_name _ www.thejfk.ca thejfk.ca;
+	location / {
+		proxy_set_header Host $http_host;
+		proxy_pass http://jfkhome-prod1.jfkhome;
+	}
+	include snippets/health-check.conf;		
+}
