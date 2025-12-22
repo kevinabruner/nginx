@@ -1,5 +1,5 @@
 - name: Build 
-  hosts: reverse-proxy_prod
+  hosts: prod
   serial: 1
   vars_files:
     - vars.yaml

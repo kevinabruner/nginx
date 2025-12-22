@@ -1,5 +1,5 @@
 - name: Update haproxy config file
-  hosts: reverse-proxy_dev
+  hosts: dev
   serial: 1
   vars_files:
     - vars.yaml
